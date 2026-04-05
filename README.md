@@ -6,6 +6,7 @@ Assignment
 
 
 Gold layer ER model preview: 
-<img width="2158" height="1277" alt="Gold ER model diagram" src="https://github.com/user-attachments/assets/87e8e082-92fc-44ff-98b5-ace8ca5efb9f" />
+<img width="1402" height="1121" alt="Gold ER model diagram" src="https://github.com/user-attachments/assets/1f649022-379a-49f0-b93c-936b9ec2e255" />
+
 
                  
