@@ -1,0 +1,104 @@
+resources:
+  jobs:
+    Databricks_assignment_Sypanx_workflow:
+      name: Databricks_assignment_Sypanx_workflow
+      description: Databricks Assignment orchestation
+      tasks:
+        - task_key: Load_Data_Into_Raw_and_Bronze
+          notebook_task:
+            notebook_path: /Repos/Databricks_Assignment_Synapx/Databricks-Assignment_Synapx/FHIR/Raw
+              and Bronze data load
+            base_parameters:
+              tables: Patient,Encounter,Observation,Condition
+              raw_layer: raw
+              schema_name: fhir
+              bronze_layer: bronze
+            source: WORKSPACE
+          min_retry_interval_millis: 900000
+          retry_on_timeout: true
+          disable_auto_optimization: false
+          environment_key: Default
+        - task_key: Load_Data_Into_Silver_Patient
+          depends_on:
+            - task_key: Load_Data_Into_Raw_and_Bronze
+          notebook_task:
+            notebook_path: /Repos/Databricks_Assignment_Synapx/Databricks-Assignment_Synapx/FHIR/Silver
+              Load Patient
+            source: WORKSPACE
+          min_retry_interval_millis: 900000
+          retry_on_timeout: true
+          disable_auto_optimization: false
+        - task_key: Load_Data_Into_Silver_condition
+          depends_on:
+            - task_key: Load_Data_Into_Raw_and_Bronze
+          notebook_task:
+            notebook_path: /Repos/Databricks_Assignment_Synapx/Databricks-Assignment_Synapx/FHIR/Silver
+              Load condition
+            base_parameters:
+              bronze_layer: bronze
+              silver_layer: silver
+              schema_name: fhir
+              tables: Patient,Encounter,Observation,Condition
+            source: WORKSPACE
+          min_retry_interval_millis: 900000
+          retry_on_timeout: true
+          disable_auto_optimization: false
+        - task_key: Load_Data_Into_Silver_encounter
+          depends_on:
+            - task_key: Load_Data_Into_Raw_and_Bronze
+          notebook_task:
+            notebook_path: /Repos/Databricks_Assignment_Synapx/Databricks-Assignment_Synapx/FHIR/Silver
+              Load encounter
+            base_parameters:
+              bronze_layer: bronze
+              silver_layer: silver
+              schema_name: fhir
+              tables: Patient,Encounter,Observation,Condition
+            source: WORKSPACE
+          min_retry_interval_millis: 900000
+          retry_on_timeout: true
+          disable_auto_optimization: false
+        - task_key: Load_Data_Into_Silver_observation
+          depends_on:
+            - task_key: Load_Data_Into_Raw_and_Bronze
+          notebook_task:
+            notebook_path: /Repos/Databricks_Assignment_Synapx/Databricks-Assignment_Synapx/FHIR/Silver
+              Load observation
+            source: WORKSPACE
+          min_retry_interval_millis: 900000
+          retry_on_timeout: true
+          disable_auto_optimization: false
+        - task_key: Load_Data_into_Gold_layer
+          depends_on:
+            - task_key: Load_Data_Into_Silver_Patient
+            - task_key: Load_Data_Into_Silver_condition
+            - task_key: Load_Data_Into_Silver_encounter
+            - task_key: Load_Data_Into_Silver_observation
+          run_if: AT_LEAST_ONE_SUCCESS
+          notebook_task:
+            notebook_path: /Repos/Databricks_Assignment_Synapx/Databricks-Assignment_Synapx/FHIR/Final
+              Gold Load As per ER diagram
+            source: WORKSPACE
+          min_retry_interval_millis: 0
+          retry_on_timeout: true
+          disable_auto_optimization: false
+      queue:
+        enabled: true
+      parameters:
+        - name: bronze_layer
+          default: bronze
+        - name: raw_layer
+          default: raw
+        - name: schema_name
+          default: fhir
+        - name: silver_layer
+          default: silver
+        - name: tables
+          default: Patient,Encounter,Observation,Condition
+        - name: Gold_layer
+          default: gold
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "5"
+      performance_target: STANDARD
