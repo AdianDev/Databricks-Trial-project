@@ -1,4 +1,4 @@
-There are few points where I could have done better but as my current organisation project deadline is coming soon and we having back 2 back client. I have to have much time on my hand to take care of everything.
+There are few points where I could have done better but as my current organisation project deadline is coming soon and we having back 2 back client calls. I don't have much time on my hand to take care of everything.
 
 So, here are the improvements I was planning to make before improvement: 
 1. In bronze table include an addtional metadata called version id which will track which has been already loaded to silver which one needs to be picked next in order to avoid repeating as we are loading 3 days of data. Therefore, the 3 times it will load for the same load_date if we follow the current logic.
