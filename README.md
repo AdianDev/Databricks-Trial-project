@@ -1,4 +1,4 @@
-# Databricks-Assignment_Synapx
+# Databricks
 
 # Healthcare FHIR Data Pipeline — Medallion Architecture
 
